@@ -1,6 +1,6 @@
 {
   "name": "simplifi-cli",
-      "version":"1.0.0",
+  "version":"1.0.1",
 "keywords": [
     "simplifi",
     "api",
@@ -19,10 +19,11 @@
   "homepage": "https://github.com/JonathanRiche/simpli.fi-cli#readme",
   "module": "index.ts",
   "main":"dist/cli.js",
+   "types": "dist/cli.d.ts",
   "type": "module",
   "scripts": {
     "build": "bun build ./src/cli.ts --target=node  --outdir ./dist",
-    "prepublishOnly": "bun run build",
+    "prepublishOnly": "bun run build"
   },
   "devDependencies": {
     "@types/bun": "latest"
@@ -32,7 +33,7 @@
   },
   "dependencies": {
     "commander": "^12.1.0",
-    "simpl.fi-api-client": "^1.0.5"
+    "simpl.fi-api-client": "^1.0.6"
   },
   "bin": {
     "simplifi": "./dist/cli.js"
