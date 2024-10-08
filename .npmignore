@@ -1,0 +1,56 @@
+# Source code
+src/
+
+# TypeScript config
+tsconfig.json
+
+# Git files
+.gitignore
+.git/
+
+# Editor directories and files
+.vscode/
+.idea/
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.sw?
+
+# Logs
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# OS generated files
+.DS_Store
+Thumbs.db
+
+# Environment variables
+.env
+.env.local
+.env.*.local
+
+# Bun lock file
+bun.lockb
+
+# Test files (if you have any)
+__tests__/
+*.spec.ts
+*.test.ts
+
+# Configuration files (if you have any)
+.eslintrc
+.prettierrc
+
+# Documentation files (excluding README)
+docs/
+*.md
+!README.md
+
+# Build scripts (if you have any)
+scripts/
+
+# Any other development-only files or directories
+

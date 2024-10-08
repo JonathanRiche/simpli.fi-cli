@@ -1,0 +1,24 @@
+{
+  "name": "simplifi-cli",
+      "version":"1.0.0",
+
+  "module": "index.ts",
+  "main":"dist/cli.js",
+  "type": "module",
+  "scripts": {
+    "build": "bun build ./src/cli.ts --target=node  --outdir ./dist"
+  },
+  "devDependencies": {
+    "@types/bun": "latest"
+  },
+  "peerDependencies": {
+    "typescript": "^5.0.0"
+  },
+  "dependencies": {
+    "commander": "^12.1.0",
+    "simpl.fi-api-client": "^1.0.5"
+  },
+  "bin": {
+    "simplifi": "./dist/cli.js"
+  }
+}
