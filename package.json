@@ -1,7 +1,22 @@
 {
   "name": "simplifi-cli",
       "version":"1.0.0",
-
+"keywords": [
+    "simplifi",
+    "api",
+    "client",
+    "typescript"
+  ],
+  "author": "Richetechguy",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/JonathanRiche/simpli.fi-cli.git"
+  },
+  "bugs": {
+    "url": "https://github.com/JonathanRiche/simpli.fi-cli/issues"
+  },
+  "homepage": "https://github.com/JonathanRiche/simpli.fi-cli#readme",
   "module": "index.ts",
   "main":"dist/cli.js",
   "type": "module",
