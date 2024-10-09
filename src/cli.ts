@@ -5,7 +5,10 @@ const actions = [
 	'list-campaigns',
 	'update-campaign',
 	'create-campaign',
-	'list-ads'
+	'list-ads',
+	'create-ad',
+	'update-ad',
+	'delete-ad'
 ] as const;
 
 const program = new Command();
@@ -20,6 +23,7 @@ program
 	.option('-c, --campaign-id <id>', 'Campaign ID')
 	.option('-f, --file <file>', 'File to read for specific actions, such as a JSON file for create-campaign')
 	.option('-s --save-output <path>', 'Save output to a file')
+	.option('-ot --output-type <type>', 'Output type (json, csv)')
 	.option('-d --debug', 'Debug output of data from API')
 	.option('-l --list-actions', 'List available actions')
 	.parse(Bun.argv);
@@ -32,15 +36,16 @@ const options = program.opts() as {
 	file?: string,
 	listActions?: boolean,
 	saveOutput?: string
+	outputType?: 'json' | 'csv'
 	debug?: boolean
 };
 
-if (Bun.env.APP_API_TOKEN && !options.apiKey) {
-	console.log('Using env variables for APP_API_TOKEN');
-}
-if (Bun.env.USER_API_KEY && !options.userKey) {
-	console.log('Using env variables for USER_API_KEY');
-}
+// if (Bun.env.APP_API_TOKEN && !options.apiKey) {
+// 	console.log('Using env variables for APP_API_TOKEN');
+// }
+// if (Bun.env.USER_API_KEY && !options.userKey) {
+// 	console.log('Using env variables for USER_API_KEY');
+// }
 if (!options.orgId) {
 	if (options.listActions) {
 		//do nothing
@@ -64,16 +69,77 @@ if (options.orgId) {
 	config.orgId = options.orgId;
 }
 const client = new SimplifiClient(config);
+async function saveOutput(output: any) {
+	if (options.saveOutput) {
+		const baseName = options.saveOutput.replace(/\.[^/.]+$/, ""); // Remove file extension if present
+		const jsonFileName = `${baseName}.json`;
+		const csvFileName = `${baseName}.csv`;
 
+		if (options.outputType === 'csv') {
+			console.log(`Saving ${options.action} output to ${csvFileName}`);
+
+			// Save as CSV
+			try {
+				let csvContent = '';
+				const dataToConvert = Array.isArray(output) ? output : [output];
+
+				if (dataToConvert.length > 0) {
+					// Add headers
+					csvContent += Object.keys(dataToConvert[0]).join(',') + '\n';
+
+					// Add data rows
+					dataToConvert.forEach(item => {
+						csvContent += Object.values(item).map(value => {
+							if (typeof value === 'string' && value.includes(',')) {
+								// Escape strings containing commas
+								return `"${value.replace(/"/g, '""')}"`;
+							}
+							return value;
+						}).join(',') + '\n';
+					});
+				}
+
+				await Bun.write(csvFileName, csvContent);
+			} catch (err) {
+				console.error("Error converting to CSV:", err);
+			}
+		} else {
+			console.log(`Saving ${options.action} output to ${jsonFileName}`);
+
+			// Save as JSON
+			await Bun.write(jsonFileName, JSON.stringify(output, null, 2));
+		}
+
+
+	} else {
+		console.log(output);
+	}
+}
+// async function saveOutput(output: any) {
+// 	if (options.saveOutput) {
+// 		console.log(`Saving ${options.action} output to ${options.saveOutput}`);
+// 		await Bun.write(options.saveOutput, JSON.stringify(output));
+// 	} else {
+// 		console.log(output);
+// 	}
+// }
 async function main() {
 	if (options.listActions) {
-		console.log('Available actions:', actions.join(', '));
+		console.log(`Available actions: ${actions.map((a) => { return `\n✅${a}` }).join('')}`);
 		return;
 	}
 	switch (options.action) {
 		case 'list-campaigns':
+			if (!options.orgId) {
+				console.error('Organization ID required');
+				return;
+			}
 			const campaigns = await client.listCampaigns();
-			console.log(campaigns);
+			if (options.saveOutput) {
+				await saveOutput(campaigns.campaigns);
+			} else {
+				console.log(campaigns.campaigns);
+			}
 			break;
 		case 'list-ads':
 			if (!options.campaignId) {
