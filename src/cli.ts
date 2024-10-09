@@ -78,6 +78,7 @@ async function saveOutput(output: any) {
 		if (options.outputType === 'csv') {
 			console.log(`Saving ${options.action} output to ${csvFileName}`);
 
+			// TODO: Destructure deeply nested objects
 			// Save as CSV
 			try {
 				let csvContent = '';
@@ -115,14 +116,6 @@ async function saveOutput(output: any) {
 		console.log(output);
 	}
 }
-// async function saveOutput(output: any) {
-// 	if (options.saveOutput) {
-// 		console.log(`Saving ${options.action} output to ${options.saveOutput}`);
-// 		await Bun.write(options.saveOutput, JSON.stringify(output));
-// 	} else {
-// 		console.log(output);
-// 	}
-// }
 async function main() {
 	if (options.listActions) {
 		console.log(`Available actions: ${actions.map((a) => { return `\n✅${a}` }).join('')}`);
@@ -158,6 +151,28 @@ async function main() {
 			break;
 		case 'create-campaign':
 			console.log('Creating a campaign');
+			if (!options.file) {
+				console.error('Please provide the campaign body for updating a campaign')
+				return;
+			}
+			const cfile = Bun.file(options.file);
+			const ccontents = await cfile.json();
+			const campaignData = ccontents;
+			const newCampaign = await client.createCampaign({
+				campaignData
+				// campaignData: {
+				// 	name: 'test',
+				// 	campaign_type_id: 5,
+				// 	start_date: '2024-10-14',
+				// 	end_date: '2024-10-31',
+				// }
+			});
+			if (options.saveOutput) {
+				console.log(`Saving new campaign to ${options.saveOutput}`);
+				await Bun.write(options.saveOutput, JSON.stringify(newCampaign));
+			} else {
+				console.log(`Creating a campaign with ID ${newCampaign.campaign.id}`, newCampaign);
+			}
 			// You would need to add more options for campaign details
 			// const newCampaign = await client.createCampaign({ ... });
 			// console.log(newCampaign);
@@ -176,8 +191,9 @@ async function main() {
 			const updatedCampaign = await client.updateCampaign({
 				campaignId: +options.campaignId,
 				campaignData: {
-					name: contents.name,
-					end_date: contents.end_date
+					...contents
+					// name: contents.name,
+					// end_date: contents.end_date
 				}
 			});
 			if (options.saveOutput) {
