@@ -2,6 +2,7 @@
 
 This CLI tool allows you to interact with the Simpli.fi API, performing actions such as listing campaigns and creating new campaigns.
 
+This package relies onto the [Simpli.fi API Client](https://github.com/JonathanRiche/simpli.fi-api) package, which is a wrapper around the Simpli.fi API.
 ## Installation
 
 To install the CLI tool globally, run:
